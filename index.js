@@ -34,6 +34,13 @@ async function run() {
 		res.send(result);
 	})
 
+	// READ: get data from db. client: Available Foods
+    app.get('/available', async(req,res) => {
+		const cursor = AvailableFoodCollection.find();
+		const result = await cursor.toArray();
+		res.send(result);
+	})
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
