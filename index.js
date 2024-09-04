@@ -62,6 +62,17 @@ async function run() {
 		res.send(result);
 	})
 
+	// load some data using query parameter
+	app.get('/availablebyEmail/:email', async(req,res) => {
+		const email = req.params.email;
+		console.log(`querying for email', ${email}`);
+
+		let query = {donatorEmail : email};
+		const result = await AvailableFoodCollection.find(query).toArray();
+		res.send(result);
+	})
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
