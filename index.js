@@ -80,6 +80,14 @@ async function run() {
 		const result = await AvailableFoodCollection.find(query).toArray();
 		res.send(result);
 	})
+	// load single data for update api. load data in details page before update
+	app.get('/manageFoodByEmail/:email/:id', async(req,res) => {
+		const id = req.params.id;
+		const query = {_id: new ObjectId(id)}
+		const result = await AvailableFoodCollection.findOne(query);
+		res.send(result);
+		console.log("success in fetch data before update")
+	})
 
 	// delete api to delete a booking
 	app.delete('/available/:id', async (req, res) => {
