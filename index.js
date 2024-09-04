@@ -47,6 +47,20 @@ async function run() {
 		const result = await AvailableFoodCollection.findOne(query);
 		res.send(result);
 	})
+	// update a property in a document: PATCH Update in Available Card's ViewDetails Modal component
+	app.patch('/available/:id', async (req, res) => {
+		const id = req.params.id;
+		const filter = { _id: new ObjectId(id) };  // filter select the particular document that needs to be updated
+		const updatedFoods = req.body;
+		console.log(updatedFoods);
+		const updateDoc = {
+			$set: {
+				foodStatus : updatedFoods.foodStatus
+			}
+		};
+		const result = await AvailableFoodCollection.updateOne(filter, updateDoc);
+		res.send(result);
+	})
 
 
     // Send a ping to confirm a successful connection
