@@ -25,7 +25,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-	// CREATE: send user input data from server to database. client: Add Spot 
+	// CREATE: send user input data from server to database. client: Add food 
 	const AvailableFoodCollection = client.db("FoodSharing").collection("AvailableFoods");
 	app.post('/addFoods', async(req,res) => {
 		const newFood = req.body;
@@ -87,6 +87,31 @@ async function run() {
 		const result = await AvailableFoodCollection.findOne(query);
 		res.send(result);
 		console.log("success in fetch data before update")
+	})
+	// UPDATE
+	app.put('/manageFoodByEmail/:id', async(req,res)=> {
+		const id = req.params.id;
+		console.log("update api",id);
+
+		const filter = {_id: new ObjectId(id)}
+		const options = {upsert: true};
+		const updatedFood = req.body;
+		const food = {
+			$set: {
+				foodName : updatedFood.foodName, 
+				foodImage : updatedFood.foodImage, 
+				foodQuantity : updatedFood.foodQuantity, 
+				pickupLocation : updatedFood.pickupLocation, 
+				expiredDateTime : updatedFood.expiredDateTime, 
+				additionalNotes : updatedFood.additionalNotes, 
+				donatorImage : updatedFood.donatorImage, 
+				donatorName : updatedFood.donatorName, 
+				donatorEmail : updatedFood.donatorEmail, 
+				foodStatus : updatedFood.foodStatus
+			}
+		}
+		const result = await AvailableFoodCollection.updateOne(filter,food,options);
+		res.send(result);
 	})
 
 	// delete api to delete a booking
