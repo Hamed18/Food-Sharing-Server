@@ -62,10 +62,19 @@ async function run() {
 		res.send(result);
 	})
 
-	// load some data using query parameter
+	// load some data using query parameter. My Request UI
 	app.get('/availablebyEmail/:email', async(req,res) => {
 		const email = req.params.email;
-		console.log(`querying for email', ${email}`);
+		console.log(`querying My Request for email', ${email}`);
+
+		let query = {donatorEmail : email};
+		const result = await AvailableFoodCollection.find(query).toArray();
+		res.send(result);
+	})
+	// load some data using query parameter. Manage My Foods UI
+	app.get('/manageFoodByEmail/:email', async(req,res) => {
+		const email = req.params.email;
+		console.log(`querying Manage My Food for email', ${email}`);
 
 		let query = {donatorEmail : email};
 		const result = await AvailableFoodCollection.find(query).toArray();
