@@ -27,6 +27,7 @@ async function run() {
 
 	// CREATE: send user input data from server to database. client: Add food 
 	const AvailableFoodCollection = client.db("FoodSharing").collection("AvailableFoods");
+	const UsersCollection = client.db("FoodSharing").collection("users");
 	app.post('/addFoods', async(req,res) => {
 		const newFood = req.body;
 		console.log(newFood);
@@ -62,7 +63,7 @@ async function run() {
 		res.send(result);
 	})
 
-	// load some data using query parameter. My Request UI
+	// load some data using email query parameter. My Request UI
 	app.get('/availablebyEmail/:email', async(req,res) => {
 		const email = req.params.email;
 		console.log(`querying My Request for email', ${email}`);
@@ -122,14 +123,25 @@ async function run() {
 		res.send(result);
 	})
 
+	// ************ users api ************ //
+	app.post('/users', async(req,res) => {
+		const newUser = req.body;
+		console.log(newUser);
+		const result = await UsersCollection.insertOne(newUser);
+		res.send(result);
+	})
+	app.get('/AllUsers', async(req,res) => {
+		const cursor = UsersCollection.find();
+		const result = await cursor.toArray();
+		res.send(result);
+	})
 
-
-    // Send a ping to confirm a successful connection
-//    await client.db("admin").command({ ping: 1 });
+  //  Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-  //  await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
