@@ -125,6 +125,10 @@ async function run() {
 
 	// ************ users api ************ //
 	app.post('/users', async(req,res) => {
+		// const {type} = req.body;
+		// let points = 0;
+		// if (type === 'donate') points = 5;
+		// else if (type === 'rescue') points = 2;
 		const newUser = req.body;
 		console.log(newUser);
 		const result = await UsersCollection.insertOne(newUser);
@@ -135,8 +139,50 @@ async function run() {
 		const result = await cursor.toArray();
 		res.send(result);
 	})
+	// patch update by email. increment reward point
+	app.patch('/AllUsers/:email', async (req, res) => {
+		const email = req.params.email;
+		console.log(email);
+		const filter = { email: email };  // filter to select the particular document
+		const updatedUser = req.body;  // client-side sends 'type' only for logic, not to store
+		console.log(updatedUser);
+	  
+		try {
+		  // Find the current user by ID to get their current points
+		  const user = await UsersCollection.findOne(filter);
+	  
+		  if (!user) {
+			return res.status(404).send({ message: "User not found" });
+		  }
+	  
+		  // Prepare the update document
+		  const updateDoc = {};
+	  
+		  // Check if the 'type' is 'donate' from client-side data, then add 5 points
+		  if (updatedUser.type === 'donate') {
+			updateDoc.$inc = { points: 5 };  // Increment points by 5 if type is 'donate'
+		  } 
+		  // Check if the 'type' is 'rescue' from client-side data, then add 2 points
+		  else if (updatedUser.type === 'rescue') {
+			updateDoc.$inc = { points: 2 };  // Increment points by 2 if type is 'rescue'
+		  } 
+		  else {
+			return res.status(400).send({ message: "Invalid type value" });
+		  }
+	  
+		  // Update the user document (increment points only, don't store 'type')
+		  const result = await UsersCollection.updateOne(filter, updateDoc);
+	  
+		  // Send the result back to the client
+		  res.send(result);
+		  console.log("User points updated successfully:", result);
+		} catch (error) {
+		  console.error("Error updating user:", error);
+		  res.status(500).send({ message: "Error updating user" });
+		}
+	  });
 
-  //  Send a ping to confirm a successful connection
+    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
