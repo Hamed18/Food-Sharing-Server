@@ -139,6 +139,14 @@ async function run() {
 		const result = await cursor.toArray();
 		res.send(result);
 	})
+	// load single user data 
+	app.get('/AllUsers/:email', async(req,res) => {
+		const email = req.params.email;
+		console.log(email);
+		const filter = { email: email }; 
+		const result = await UsersCollection.findOne(filter);
+		res.send(result);
+	})
 	// patch update by email. increment reward point
 	app.patch('/AllUsers/:email', async (req, res) => {
 		const email = req.params.email;
