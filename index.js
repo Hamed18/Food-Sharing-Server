@@ -125,12 +125,14 @@ async function run() {
 
 	// ************ users api ************ //
 	app.post('/users', async(req,res) => {
-		// const {type} = req.body;
-		// let points = 0;
-		// if (type === 'donate') points = 5;
-		// else if (type === 'rescue') points = 2;
 		const newUser = req.body;
 		console.log(newUser);
+		// check user already exists in database
+		const query = {email : newUser.email}
+		const existingUser = await UsersCollection.findOne(query);
+		if (existingUser){
+			return res.send({message:'user already exists', insertedId: null})
+		}
 		const result = await UsersCollection.insertOne(newUser);
 		res.send(result);
 	})
